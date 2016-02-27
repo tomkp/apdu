@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/tomkp/apdu",
   "dependencies": {
-    "hexify": "^1.0.0"
+    "hexify": "^1.0.1"
   }
 }
