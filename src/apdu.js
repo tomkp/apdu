@@ -1,7 +1,6 @@
 'use strict';
 
-
-var hexify = require('./hexify');
+import hexify from 'hexify';
 
 
 function Apdu(obj) {
