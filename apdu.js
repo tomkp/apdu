@@ -1,5 +1,7 @@
+'use strict';
 
-var hexify = require('hexify');
+
+var hexify = require('./hexify');
 
 
 function Apdu(obj) {
@@ -10,26 +12,30 @@ function Apdu(obj) {
     this.p1 = obj.p1;
     this.p2 = obj.p2;
     this.data = obj.data;
-    this.le = obj.le;
+    this.le = obj.le || 0;
 
     // case 1
     if (!this.size && !this.data && !this.le) {
+        //this.le = -1;
+        //console.info('case 1');
         this.size = 4;
-        this.le = -1;
     }
     // case 2
     else if (!this.size && !this.data) {
+        //console.info('case 2');
         this.size = 4 + 2;
     }
 
     // case 3
     else if (!this.size && !this.le) {
+        //console.info('case 3');
         this.size = this.data.length + 5 + 4;
-        this.le = -1;
+        //this.le = -1;
     }
 
     // case 4
     else if (!this.size) {
+        //console.info('case 4');
         this.size = this.data.length + 5 + 4;
     }
 
@@ -37,7 +43,7 @@ function Apdu(obj) {
     if (this.data) {
         this.lc = this.data.length;
     } else {
-        this.lc = 0;
+        //this.lc = 0;
     }
 
     this.bytes = [];
@@ -45,9 +51,12 @@ function Apdu(obj) {
     this.bytes.push(this.ins);
     this.bytes.push(this.p1);
     this.bytes.push(this.p2);
-    this.bytes.push(this.lc);
-    this.bytes = this.bytes.concat(this.data);
-    //this.bytes.push(this.le);
+
+    if (this.data) {
+        this.bytes.push(this.lc);
+        this.bytes = this.bytes.concat(this.data);
+    }
+    this.bytes.push(this.le);
 }
 
 Apdu.prototype.toString = function() {
@@ -63,4 +72,3 @@ Apdu.prototype.toBuffer = function() {
 };
 
 module.exports = Apdu;
-
