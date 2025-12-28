@@ -67,7 +67,7 @@ Apdu.prototype.toByteArray = function() {
 };
 
 Apdu.prototype.toBuffer = function() {
-    return new Buffer(this.bytes);
+    return Buffer.from(this.bytes);
 };
 
 module.exports = Apdu;
