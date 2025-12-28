@@ -1,8 +1,8 @@
 src/
 tsconfig.json
 .github/
-.nvmrc
 .prettierrc
+.prettierignore
 eslint.config.js
 .idea/
 coverage/
