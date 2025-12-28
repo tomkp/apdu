@@ -1,4 +1,5 @@
-src/apdu.test.js
+src/
+tsconfig.json
 .github/
 .nvmrc
 .prettierrc
