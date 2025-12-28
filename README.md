@@ -13,16 +13,24 @@ npm install apdu
 ```javascript
 import Apdu from 'apdu';
 
-// SELECT command example
-const selectCommand = new Apdu({
-  cla: 0x00, // Class byte
-  ins: 0xa4, // Instruction: SELECT
-  p1: 0x04, // P1: Select by DF name
-  p2: 0x00, // P2: First or only occurrence
-  data: [0xa0, 0x00, 0x00, 0x00, 0x04, 0x10, 0x10], // AID
-  le: 0x00, // Expected response length
+// Case 1: No data, no response expected (4 bytes)
+const case1 = new Apdu({
+  cla: 0x00,
+  ins: 0xa4,
+  p1: 0x04,
+  p2: 0x00,
 });
+console.log(case1.toString()); // "00a40400"
 
+// Case 4: SELECT command with data and response expected
+const selectCommand = new Apdu({
+  cla: 0x00,
+  ins: 0xa4,
+  p1: 0x04,
+  p2: 0x00,
+  data: [0xa0, 0x00, 0x00, 0x00, 0x04, 0x10, 0x10],
+  le: 0x00, // Expect response (Le=0x00 means up to 256 bytes)
+});
 console.log(selectCommand.toString()); // "00a4040007a000000004101000"
 console.log(selectCommand.toByteArray()); // Byte array
 console.log(selectCommand.toBuffer()); // Node.js Buffer
@@ -34,14 +42,14 @@ console.log(selectCommand.toBuffer()); // Node.js Buffer
 
 Creates a new APDU command.
 
-| Option | Type     | Required | Description              |
-| ------ | -------- | -------- | ------------------------ |
-| `cla`  | number   | Yes      | Class byte (0x00-0xFF)   |
-| `ins`  | number   | Yes      | Instruction byte         |
-| `p1`   | number   | Yes      | Parameter 1              |
-| `p2`   | number   | Yes      | Parameter 2              |
-| `data` | number[] | No       | Command data bytes       |
-| `le`   | number   | No       | Expected response length |
+| Option | Type     | Required | Description                                                        |
+| ------ | -------- | -------- | ------------------------------------------------------------------ |
+| `cla`  | number   | Yes      | Class byte (0x00-0xFF)                                             |
+| `ins`  | number   | Yes      | Instruction byte (0x00-0xFF)                                       |
+| `p1`   | number   | Yes      | Parameter 1 (0x00-0xFF)                                            |
+| `p2`   | number   | Yes      | Parameter 2 (0x00-0xFF)                                            |
+| `data` | number[] | No       | Command data bytes                                                 |
+| `le`   | number   | No       | Expected response length (0x00-0xFF). Only included when provided. |
 
 ### Methods
 
@@ -59,12 +67,14 @@ Returns the APDU command as a Node.js Buffer.
 
 ## APDU Cases
 
-The library automatically handles all four APDU cases defined in ISO 7816-4:
+The library correctly handles all four APDU cases defined in ISO 7816-4:
 
-- **Case 1**: No data field, no response data expected (CLA INS P1 P2)
-- **Case 2**: No data field, response data expected (CLA INS P1 P2 Le)
-- **Case 3**: Data field present, no response data expected (CLA INS P1 P2 Lc Data)
-- **Case 4**: Data field present, response data expected (CLA INS P1 P2 Lc Data Le)
+- **Case 1**: No data, no Le → `CLA INS P1 P2` (4 bytes)
+- **Case 2**: No data, with Le → `CLA INS P1 P2 Le` (5 bytes)
+- **Case 3**: With data, no Le → `CLA INS P1 P2 Lc Data`
+- **Case 4**: With data, with Le → `CLA INS P1 P2 Lc Data Le`
+
+**Note:** Le is only included in the output when explicitly provided. This ensures correct Case 1/3 handling where no response is expected.
 
 ## License
 
