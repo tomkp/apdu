@@ -70,4 +70,4 @@ Apdu.prototype.toBuffer = function() {
     return Buffer.from(this.bytes);
 };
 
-module.exports = Apdu;
+export default Apdu;
