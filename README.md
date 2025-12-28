@@ -23,7 +23,7 @@ const selectCommand = new Apdu({
   le: 0x00, // Expected response length
 });
 
-console.log(selectCommand.toString()); // Hex string: "00a4040007a000000410100000"
+console.log(selectCommand.toString()); // "00a4040007a000000004101000"
 console.log(selectCommand.toByteArray()); // Byte array
 console.log(selectCommand.toBuffer()); // Node.js Buffer
 ```
