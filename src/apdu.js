@@ -2,14 +2,46 @@
 
 import hexify from 'hexify';
 
+function isValidByte(value) {
+  return typeof value === 'number' && value >= 0 && value <= 255;
+}
+
 function Apdu(obj) {
-  this.size = obj.size;
-  this.cla = obj.cla;
-  this.ins = obj.ins;
-  this.p1 = obj.p1;
-  this.p2 = obj.p2;
-  this.data = obj.data;
-  this.le = obj.le || 0;
+  if (!obj || typeof obj !== 'object') {
+    throw new TypeError('Options object is required');
+  }
+
+  const { cla, ins, p1, p2, data, le = 0, size } = obj;
+
+  if (!isValidByte(cla)) {
+    throw new RangeError('cla must be a byte value (0-255)');
+  }
+  if (!isValidByte(ins)) {
+    throw new RangeError('ins must be a byte value (0-255)');
+  }
+  if (!isValidByte(p1)) {
+    throw new RangeError('p1 must be a byte value (0-255)');
+  }
+  if (!isValidByte(p2)) {
+    throw new RangeError('p2 must be a byte value (0-255)');
+  }
+
+  if (data !== undefined) {
+    if (!Array.isArray(data)) {
+      throw new TypeError('data must be an array of bytes');
+    }
+    if (data.some((b) => !isValidByte(b))) {
+      throw new RangeError('All data values must be bytes (0-255)');
+    }
+  }
+
+  this.size = size;
+  this.cla = cla;
+  this.ins = ins;
+  this.p1 = p1;
+  this.p2 = p2;
+  this.data = data;
+  this.le = le;
 
   // case 1
   if (!this.size && !this.data && !this.le) {
