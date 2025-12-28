@@ -4,3 +4,6 @@ tsconfig.json
 .nvmrc
 .prettierrc
 eslint.config.js
+.idea/
+coverage/
+.gitignore
