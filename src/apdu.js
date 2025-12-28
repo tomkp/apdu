@@ -1,7 +1,3 @@
-'use strict';
-
-import hexify from 'hexify';
-
 function isValidByte(value) {
   return typeof value === 'number' && value >= 0 && value <= 255;
 }
@@ -78,11 +74,11 @@ function Apdu(obj) {
 }
 
 Apdu.prototype.toString = function () {
-  return hexify.toHexString(this.bytes);
+  return this.bytes.map((b) => b.toString(16).padStart(2, '0')).join('');
 };
 
 Apdu.prototype.toByteArray = function () {
-  return this.bytes;
+  return [...this.bytes];
 };
 
 Apdu.prototype.toBuffer = function () {
