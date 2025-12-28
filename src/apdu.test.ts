@@ -3,7 +3,7 @@ import Apdu from './apdu.js';
 
 describe('Apdu', () => {
   describe('constructor', () => {
-    it('should construct a basic APDU command (case 1 - no data, no le)', () => {
+    it('should construct Case 1 APDU (no data, no le) - 4 bytes', () => {
       const apdu = new Apdu({
         cla: 0x00,
         ins: 0xa4,
@@ -15,10 +15,24 @@ describe('Apdu', () => {
       expect(apdu.ins).toBe(0xa4);
       expect(apdu.p1).toBe(0x04);
       expect(apdu.p2).toBe(0x00);
-      expect(apdu.le).toBe(0);
+      expect(apdu.le).toBeUndefined();
+      expect(apdu.toByteArray()).toEqual([0x00, 0xa4, 0x04, 0x00]);
     });
 
-    it('should construct case 2 APDU (no data, with non-zero le)', () => {
+    it('should construct Case 2 APDU (no data, with le) - 5 bytes', () => {
+      const apdu = new Apdu({
+        cla: 0x00,
+        ins: 0xca,
+        p1: 0x00,
+        p2: 0x00,
+        le: 0x00, // Le=0x00 means expect 256 bytes
+      });
+
+      expect(apdu.le).toBe(0x00);
+      expect(apdu.toByteArray()).toEqual([0x00, 0xca, 0x00, 0x00, 0x00]);
+    });
+
+    it('should construct Case 2 APDU with non-zero le', () => {
       const apdu = new Apdu({
         cla: 0x00,
         ins: 0xca,
@@ -31,7 +45,7 @@ describe('Apdu', () => {
       expect(apdu.toByteArray()).toEqual([0x00, 0xca, 0x00, 0x00, 0x10]);
     });
 
-    it('should construct case 3 APDU (with data, no le)', () => {
+    it('should construct Case 3 APDU (with data, no le)', () => {
       const apdu = new Apdu({
         cla: 0x00,
         ins: 0xa4,
@@ -42,9 +56,13 @@ describe('Apdu', () => {
 
       expect(apdu.data).toEqual([0xa0, 0x00, 0x00, 0x00, 0x04, 0x10, 0x10]);
       expect(apdu.lc).toBe(7);
+      expect(apdu.le).toBeUndefined();
+      expect(apdu.toByteArray()).toEqual([
+        0x00, 0xa4, 0x04, 0x00, 0x07, 0xa0, 0x00, 0x00, 0x00, 0x04, 0x10, 0x10,
+      ]);
     });
 
-    it('should construct case 4 APDU (with data and le)', () => {
+    it('should construct Case 4 APDU (with data and le)', () => {
       const apdu = new Apdu({
         cla: 0x00,
         ins: 0xa4,
@@ -57,11 +75,15 @@ describe('Apdu', () => {
       expect(apdu.data).toEqual([0xa0, 0x00, 0x00, 0x00, 0x04, 0x10, 0x10]);
       expect(apdu.lc).toBe(7);
       expect(apdu.le).toBe(0x00);
+      expect(apdu.toByteArray()).toEqual([
+        0x00, 0xa4, 0x04, 0x00, 0x07, 0xa0, 0x00, 0x00, 0x00, 0x04, 0x10, 0x10,
+        0x00,
+      ]);
     });
   });
 
   describe('toString', () => {
-    it('should return hex string representation', () => {
+    it('should return hex string representation (Case 1)', () => {
       const apdu = new Apdu({
         cla: 0x00,
         ins: 0xa4,
@@ -69,7 +91,7 @@ describe('Apdu', () => {
         p2: 0x00,
       });
 
-      expect(apdu.toString()).toBe('00a4040000');
+      expect(apdu.toString()).toBe('00a40400');
     });
 
     it('should return hex string with data', () => {
@@ -87,7 +109,7 @@ describe('Apdu', () => {
   });
 
   describe('toByteArray', () => {
-    it('should return byte array', () => {
+    it('should return byte array (Case 1)', () => {
       const apdu = new Apdu({
         cla: 0x00,
         ins: 0xa4,
@@ -95,7 +117,7 @@ describe('Apdu', () => {
         p2: 0x00,
       });
 
-      expect(apdu.toByteArray()).toEqual([0x00, 0xa4, 0x04, 0x00, 0x00]);
+      expect(apdu.toByteArray()).toEqual([0x00, 0xa4, 0x04, 0x00]);
     });
 
     it('should return byte array with data', () => {
@@ -115,7 +137,7 @@ describe('Apdu', () => {
   });
 
   describe('toBuffer', () => {
-    it('should return a Buffer', () => {
+    it('should return a Buffer (Case 1)', () => {
       const apdu = new Apdu({
         cla: 0x00,
         ins: 0xa4,
@@ -125,7 +147,7 @@ describe('Apdu', () => {
 
       const buffer = apdu.toBuffer();
       expect(Buffer.isBuffer(buffer)).toBe(true);
-      expect(buffer).toEqual(Buffer.from([0x00, 0xa4, 0x04, 0x00, 0x00]));
+      expect(buffer).toEqual(Buffer.from([0x00, 0xa4, 0x04, 0x00]));
     });
   });
 
@@ -205,6 +227,15 @@ describe('Apdu', () => {
       ).toThrow(RangeError);
       expect(
         () => new Apdu({ cla: 0, ins: 0xa4, p1: 0, p2: 0, data: [-1] })
+      ).toThrow(RangeError);
+    });
+
+    it('should throw RangeError if le is out of range', () => {
+      expect(
+        () => new Apdu({ cla: 0, ins: 0xa4, p1: 0, p2: 0, le: -1 })
+      ).toThrow(RangeError);
+      expect(
+        () => new Apdu({ cla: 0, ins: 0xa4, p1: 0, p2: 0, le: 256 })
       ).toThrow(RangeError);
     });
   });

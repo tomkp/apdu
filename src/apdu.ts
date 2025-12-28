@@ -9,7 +9,7 @@ export interface ApduOptions {
   p2: number;
   /** Command data bytes */
   data?: number[];
-  /** Expected response length */
+  /** Expected response length (0x00-0xFF). Only include Le in output when explicitly provided. */
   le?: number;
 }
 
@@ -28,8 +28,8 @@ class Apdu {
   readonly p2: number;
   /** Command data bytes */
   readonly data?: number[];
-  /** Expected response length */
-  readonly le: number;
+  /** Expected response length (undefined for Case 1/3, number for Case 2/4) */
+  readonly le?: number;
   /** Length of command data (Lc) */
   readonly lc?: number;
   /** Raw byte array of the APDU command */
@@ -40,7 +40,7 @@ class Apdu {
       throw new TypeError('Options object is required');
     }
 
-    const { cla, ins, p1, p2, data, le = 0 } = options;
+    const { cla, ins, p1, p2, data, le } = options;
 
     if (!isValidByte(cla)) {
       throw new RangeError('cla must be a byte value (0-255)');
@@ -64,6 +64,10 @@ class Apdu {
       }
     }
 
+    if (le !== undefined && !isValidByte(le)) {
+      throw new RangeError('le must be a byte value (0-255)');
+    }
+
     this.cla = cla;
     this.ins = ins;
     this.p1 = p1;
@@ -81,7 +85,10 @@ class Apdu {
       this.bytes.push(this.lc!);
       this.bytes = this.bytes.concat(this.data);
     }
-    this.bytes.push(this.le);
+
+    if (this.le !== undefined) {
+      this.bytes.push(this.le);
+    }
   }
 
   /**
