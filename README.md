@@ -34,15 +34,14 @@ console.log(selectCommand.toBuffer()); // Node.js Buffer
 
 Creates a new APDU command.
 
-| Option | Type     | Required | Description                         |
-| ------ | -------- | -------- | ----------------------------------- |
-| `cla`  | number   | Yes      | Class byte (0x00-0xFF)              |
-| `ins`  | number   | Yes      | Instruction byte                    |
-| `p1`   | number   | Yes      | Parameter 1                         |
-| `p2`   | number   | Yes      | Parameter 2                         |
-| `data` | number[] | No       | Command data bytes                  |
-| `le`   | number   | No       | Expected response length            |
-| `size` | number   | No       | Override automatic size calculation |
+| Option | Type     | Required | Description              |
+| ------ | -------- | -------- | ------------------------ |
+| `cla`  | number   | Yes      | Class byte (0x00-0xFF)   |
+| `ins`  | number   | Yes      | Instruction byte         |
+| `p1`   | number   | Yes      | Parameter 1              |
+| `p2`   | number   | Yes      | Parameter 2              |
+| `data` | number[] | No       | Command data bytes       |
+| `le`   | number   | No       | Expected response length |
 
 ### Methods
 

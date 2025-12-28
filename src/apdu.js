@@ -7,7 +7,7 @@ function Apdu(obj) {
     throw new TypeError('Options object is required');
   }
 
-  const { cla, ins, p1, p2, data, le = 0, size } = obj;
+  const { cla, ins, p1, p2, data, le = 0 } = obj;
 
   if (!isValidByte(cla)) {
     throw new RangeError('cla must be a byte value (0-255)');
@@ -31,30 +31,12 @@ function Apdu(obj) {
     }
   }
 
-  this.size = size;
   this.cla = cla;
   this.ins = ins;
   this.p1 = p1;
   this.p2 = p2;
   this.data = data;
   this.le = le;
-
-  // Case 1: No data, no Le
-  if (!this.size && !this.data && !this.le) {
-    this.size = 4;
-  }
-  // Case 2: No data, with Le
-  else if (!this.size && !this.data) {
-    this.size = 4 + 2;
-  }
-  // Case 3: With data, no Le
-  else if (!this.size && !this.le) {
-    this.size = this.data.length + 5 + 4;
-  }
-  // Case 4: With data and Le
-  else if (!this.size) {
-    this.size = this.data.length + 5 + 4;
-  }
 
   if (this.data) {
     this.lc = this.data.length;

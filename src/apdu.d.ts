@@ -11,13 +11,9 @@ export interface ApduOptions {
   data?: number[];
   /** Expected response length */
   le?: number;
-  /** Override automatic size calculation */
-  size?: number;
 }
 
 declare class Apdu {
-  /** The calculated or provided size of the APDU */
-  readonly size: number;
   /** Class byte */
   readonly cla: number;
   /** Instruction byte */
