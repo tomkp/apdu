@@ -15,7 +15,7 @@ describe('Apdu', () => {
       expect(apdu.ins).toBe(0xa4);
       expect(apdu.p1).toBe(0x04);
       expect(apdu.p2).toBe(0x00);
-      expect(apdu.size).toBe(4);
+      expect(apdu.le).toBe(0);
     });
 
     it('should construct case 2 APDU (no data, with non-zero le)', () => {
@@ -28,7 +28,7 @@ describe('Apdu', () => {
       });
 
       expect(apdu.le).toBe(0x10);
-      expect(apdu.size).toBe(6);
+      expect(apdu.toByteArray()).toEqual([0x00, 0xca, 0x00, 0x00, 0x10]);
     });
 
     it('should construct case 3 APDU (with data, no le)', () => {
@@ -42,7 +42,6 @@ describe('Apdu', () => {
 
       expect(apdu.data).toEqual([0xa0, 0x00, 0x00, 0x00, 0x04, 0x10, 0x10]);
       expect(apdu.lc).toBe(7);
-      expect(apdu.size).toBe(16);
     });
 
     it('should construct case 4 APDU (with data and le)', () => {
@@ -127,6 +126,23 @@ describe('Apdu', () => {
       const buffer = apdu.toBuffer();
       expect(Buffer.isBuffer(buffer)).toBe(true);
       expect(buffer).toEqual(Buffer.from([0x00, 0xa4, 0x04, 0x00, 0x00]));
+    });
+  });
+
+  describe('immutability', () => {
+    it('should not allow mutation of internal state via toByteArray', () => {
+      const apdu = new Apdu({
+        cla: 0x00,
+        ins: 0xa4,
+        p1: 0x04,
+        p2: 0x00,
+      });
+
+      const bytes1 = apdu.toByteArray();
+      bytes1[0] = 0xff; // Mutate the returned array
+
+      const bytes2 = apdu.toByteArray();
+      expect(bytes2[0]).toBe(0x00); // Internal state should be unchanged
     });
   });
 
