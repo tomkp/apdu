@@ -43,36 +43,25 @@ function Apdu(obj) {
   this.data = data;
   this.le = le;
 
-  // case 1
+  // Case 1: No data, no Le
   if (!this.size && !this.data && !this.le) {
-    //this.le = -1;
-    //console.info('case 1');
     this.size = 4;
   }
-  // case 2
+  // Case 2: No data, with Le
   else if (!this.size && !this.data) {
-    //console.info('case 2');
     this.size = 4 + 2;
   }
-
-  // case 3
+  // Case 3: With data, no Le
   else if (!this.size && !this.le) {
-    //console.info('case 3');
     this.size = this.data.length + 5 + 4;
-    //this.le = -1;
   }
-
-  // case 4
+  // Case 4: With data and Le
   else if (!this.size) {
-    //console.info('case 4');
     this.size = this.data.length + 5 + 4;
   }
 
-  // set data
   if (this.data) {
     this.lc = this.data.length;
-  } else {
-    //this.lc = 0;
   }
 
   this.bytes = [];
