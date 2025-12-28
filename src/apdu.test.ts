@@ -148,8 +148,11 @@ describe('Apdu', () => {
 
   describe('validation', () => {
     it('should throw TypeError if options is not an object', () => {
+      // @ts-expect-error Testing invalid input
       expect(() => new Apdu()).toThrow(TypeError);
+      // @ts-expect-error Testing invalid input
       expect(() => new Apdu(null)).toThrow(TypeError);
+      // @ts-expect-error Testing invalid input
       expect(() => new Apdu('string')).toThrow(TypeError);
     });
 
@@ -191,6 +194,7 @@ describe('Apdu', () => {
 
     it('should throw TypeError if data is not an array', () => {
       expect(
+        // @ts-expect-error Testing invalid input
         () => new Apdu({ cla: 0, ins: 0xa4, p1: 0, p2: 0, data: 'string' })
       ).toThrow(TypeError);
     });
