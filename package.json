@@ -2,12 +2,17 @@
   "name": "apdu",
   "version": "0.0.5",
   "description": "",
+  "type": "module",
   "main": "lib/apdu.js",
   "types": "src/apdu.d.ts",
   "scripts": {
     "compile": "babel -d lib/ src/",
     "test": "vitest run",
     "test:watch": "vitest",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "prepublishOnly": "npm run compile",
     "release:patch": "npm run compile && npm version patch && git push && npm publish"
   },
@@ -28,7 +33,12 @@
     "@babel/cli": "^7.26.4",
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
+    "@eslint/js": "^9.39.2",
     "@types/node": "^25.0.3",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "prettier": "^3.7.4",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16"
   }
