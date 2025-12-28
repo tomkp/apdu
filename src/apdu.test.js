@@ -129,4 +129,63 @@ describe('Apdu', () => {
       expect(buffer).toEqual(Buffer.from([0x00, 0xa4, 0x04, 0x00, 0x00]));
     });
   });
+
+  describe('validation', () => {
+    it('should throw TypeError if options is not an object', () => {
+      expect(() => new Apdu()).toThrow(TypeError);
+      expect(() => new Apdu(null)).toThrow(TypeError);
+      expect(() => new Apdu('string')).toThrow(TypeError);
+    });
+
+    it('should throw RangeError if cla is out of range', () => {
+      expect(() => new Apdu({ cla: -1, ins: 0xa4, p1: 0, p2: 0 })).toThrow(
+        RangeError
+      );
+      expect(() => new Apdu({ cla: 256, ins: 0xa4, p1: 0, p2: 0 })).toThrow(
+        RangeError
+      );
+    });
+
+    it('should throw RangeError if ins is out of range', () => {
+      expect(() => new Apdu({ cla: 0, ins: -1, p1: 0, p2: 0 })).toThrow(
+        RangeError
+      );
+      expect(() => new Apdu({ cla: 0, ins: 256, p1: 0, p2: 0 })).toThrow(
+        RangeError
+      );
+    });
+
+    it('should throw RangeError if p1 is out of range', () => {
+      expect(() => new Apdu({ cla: 0, ins: 0xa4, p1: -1, p2: 0 })).toThrow(
+        RangeError
+      );
+      expect(() => new Apdu({ cla: 0, ins: 0xa4, p1: 256, p2: 0 })).toThrow(
+        RangeError
+      );
+    });
+
+    it('should throw RangeError if p2 is out of range', () => {
+      expect(() => new Apdu({ cla: 0, ins: 0xa4, p1: 0, p2: -1 })).toThrow(
+        RangeError
+      );
+      expect(() => new Apdu({ cla: 0, ins: 0xa4, p1: 0, p2: 256 })).toThrow(
+        RangeError
+      );
+    });
+
+    it('should throw TypeError if data is not an array', () => {
+      expect(
+        () => new Apdu({ cla: 0, ins: 0xa4, p1: 0, p2: 0, data: 'string' })
+      ).toThrow(TypeError);
+    });
+
+    it('should throw RangeError if data contains invalid byte values', () => {
+      expect(
+        () => new Apdu({ cla: 0, ins: 0xa4, p1: 0, p2: 0, data: [256] })
+      ).toThrow(RangeError);
+      expect(
+        () => new Apdu({ cla: 0, ins: 0xa4, p1: 0, p2: 0, data: [-1] })
+      ).toThrow(RangeError);
+    });
+  });
 });
