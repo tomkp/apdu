@@ -5,6 +5,8 @@
   "main": "lib/apdu.js",
   "scripts": {
     "compile": "babel -d lib/ src/",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepublishOnly": "npm run compile",
     "release:patch": "npm run compile && npm version patch && git push && npm publish"
   },
@@ -24,6 +26,7 @@
   "devDependencies": {
     "@babel/cli": "^7.26.4",
     "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0"
+    "@babel/preset-env": "^7.26.0",
+    "vitest": "^4.0.16"
   }
 }
