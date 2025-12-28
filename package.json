@@ -1,10 +1,22 @@
 {
   "name": "apdu",
   "version": "0.0.5",
-  "description": "",
+  "description": "Lightweight library for constructing APDU commands for smart card communication (ISO 7816-4)",
+  "keywords": [
+    "apdu",
+    "smart-card",
+    "smartcard",
+    "iso-7816",
+    "nfc",
+    "pcsc",
+    "contactless"
+  ],
   "type": "module",
   "main": "lib/apdu.js",
   "types": "src/apdu.d.ts",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "compile": "babel -d lib/ src/",
     "test": "vitest run",
